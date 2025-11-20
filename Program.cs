@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tasky.Models;
+using Tasky.Repositories.IRepos;
+using Tasky.Repositories.Repos;
+using Tasky.Services.IServs;
+using Tasky.Services.Servs;
 
 namespace Tasky
 {
@@ -24,6 +28,11 @@ namespace Tasky
             builder.Services.AddScoped<Repositories.IRepos.IAccountRepo, Repositories.Repos.AccountRepo>();
             builder.Services.AddScoped<Services.IServs.IAccountServs, Services.Servs.AccountServs>();
 
+            builder.Services.AddScoped<ITaskRepo,TaskRepo>();
+            builder.Services.AddScoped<ITaskServs,TaskServs>();
+            builder.Services.AddScoped<ICatRepo, CatRepo>();
+            builder.Services.AddScoped<ICatServs, CatServs>();
+           
 
             var app = builder.Build();
 

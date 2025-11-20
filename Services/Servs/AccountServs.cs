@@ -22,6 +22,7 @@ namespace Tasky.Services.Servs
                 Email = UserVM.Email,
                 FullName = UserVM.FullName,
             };
+
             return await _AccountRepo.CreateUserAsync(user, UserVM.Password);
         }
 
@@ -38,6 +39,8 @@ namespace Tasky.Services.Servs
                 UserName = UserVM.Email,
                 Email = UserVM.Email,
             };
+
+
             return await _AccountRepo.LoginAsync(user, UserVM.Password,UserVM.RememberMe);
         }
 
