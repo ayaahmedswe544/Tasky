@@ -49,7 +49,8 @@ namespace Tasky.Repositories.Repos
             string? searchTerm = null,
             string? sortOrder = "asc",
             int pageNumber = 1,
-            int pageSize = 10)
+            int pageSize = 10,
+            bool comp = false)
         {
             var query = _context.TaskItems
                 .Include(t => t.Category)
@@ -61,9 +62,17 @@ namespace Tasky.Repositories.Repos
 
             if (priority.HasValue)
                 query = query.Where(t => t.Priority == priority.Value);
+            if (comp)
+            {
+                
+                query = query.Where(t => t.IsCompleted ==true);
+            }
+               
 
             if (overdue)
                 query = query.Where(t => t.DueDate < DateTime.Now && !t.IsCompleted);
+
+
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -89,7 +98,8 @@ namespace Tasky.Repositories.Repos
             int? categoryId = null,
             PriorityLevel? priority = null,
             bool overdue = false,
-            string? searchTerm = null)
+            string? searchTerm = null,
+            bool comp = false)
         {
             var query = _context.TaskItems.Where(t => t.AppUserId == userId);
 
@@ -101,6 +111,12 @@ namespace Tasky.Repositories.Repos
 
             if (overdue)
                 query = query.Where(t => t.DueDate < DateTime.Now && !t.IsCompleted);
+            if (comp)
+            {
+
+                query = query.Where(t => t.IsCompleted == true);
+            }
+
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {

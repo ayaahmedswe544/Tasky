@@ -23,8 +23,13 @@ namespace Tasky
                 .HasOne(t=>t.AppUser)
                 .WithMany(u => u.Tasks)
                 .HasForeignKey(t => t.AppUserId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Category>()
+                .HasOne(t => t.AppUser)
+                .WithMany(u =>u.Categories)
+                .HasForeignKey(t => t.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<TaskItem>()
                 .HasOne(t => t.Category)

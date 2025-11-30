@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Tasky.Models;
 using Tasky.Repositories.IRepos;
 using Tasky.Services.IServs;
@@ -26,6 +27,7 @@ namespace Tasky.Controllers
     bool overdue = false,
     string? searchTerm = null,
     string? sortOrder = "asc",
+    bool comp=false,
     int pageNumber = 1,
     int pageSize = 10)
         {
@@ -39,7 +41,8 @@ namespace Tasky.Controllers
                 searchTerm,
                 sortOrder,
                 pageNumber,
-                pageSize
+                pageSize,
+                comp
             );
 
             var totalCount = await _taskServs.GetTotalTaskCountAsync(
@@ -59,10 +62,12 @@ namespace Tasky.Controllers
                 SortOrder = sortOrder,
                 SearchTerm = searchTerm,
                 CategoryId = categoryId,
-                Priority = priority
+                Priority = priority,
+                Overdue=overdue,
+                Comp=comp
             };
 
-            ViewBag.Categories = await _categoryServ.GetAllCategoriesAsync();
+            ViewBag.Categories = await _categoryServ.GetAllCategoriesAsync(userId, searchTerm = null, sortOrder = "asc", pageNumber = 1,pageSize=10);
             ViewBag.SelectedCategory = categoryId;
             ViewBag.SelectedPriority = priority;
             ViewBag.Overdue = overdue;
@@ -76,16 +81,23 @@ namespace Tasky.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Create()
+
         {
-            var categories = await _categoryServ.GetAllCategoriesAsync();
-            ViewBag.Categories = categories;
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.Categories = await _categoryServ.GetAllCategoriesAsync(userId, null, "asc", 1,10);
+
+            return View(new TaskVM()
+            {
+                CreatedAt=DateTime.Today,
+              DueDate=DateTime.Today
+            });
 
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(TaskVM taskVM)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             taskVM.AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ModelState.Remove(nameof(taskVM.AppUserId));
 
@@ -98,7 +110,7 @@ namespace Tasky.Controllers
                 }
             }
             ModelState.AddModelError("", "Failed to create task.");
-            var categories = await _categoryServ.GetAllCategoriesAsync();
+            var categories = await _categoryServ.GetAllCategoriesAsync(userId, null, "asc", 1, 10);
             ViewBag.Categories = categories;
             return View(taskVM);
         }
@@ -107,24 +119,37 @@ namespace Tasky.Controllers
         [AcceptVerbs("Get", "Post")]
         public IActionResult ValidateDueDate(DateTime DueDate, DateTime CreatedAt)
         {
-            if (DueDate <= CreatedAt)
+            if (DueDate <CreatedAt)
             {
                 return Json("Due date must be later than Created At date.");
             }
 
             return Json(true);
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult ValidateDueDateCreate(DateTime DueDate)
+        {
+            if (DueDate < DateTime.Today)
+            {
+                return Json("Due date can't be in the past");
+            }
+
+            return Json(true);
+        }
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
+
         {
-            var categories = await _categoryServ.GetAllCategoriesAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var categories = await _categoryServ.GetAllCategoriesAsync(userId, null, "asc", 1, 10);
             ViewBag.Categories = categories;
-            TaskVM taskVM = await _taskServs.GetTaskByIdAsync(id);
+            EditTaskVm taskVM = await _taskServs.GetTaskByIdAsync(id);
             return View(taskVM);
 
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(TaskVM taskVM)
+        public async Task<IActionResult> Edit(EditTaskVm taskVM)
         {
             taskVM.AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ModelState.Remove(nameof(taskVM.AppUserId));

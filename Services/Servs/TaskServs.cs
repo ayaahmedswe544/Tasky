@@ -20,7 +20,7 @@ namespace Tasky.Services.Servs
                 Title = TaskVM.Title,
                 Description = TaskVM.Description,
                 IsCompleted = TaskVM.IsCompleted,
-                CreatedAt = TaskVM.CreatedAt,
+                CreatedAt = DateTime.Today,
                 DueDate = TaskVM.DueDate,
                 Priority = TaskVM.Priority,
                 AppUserId = TaskVM.AppUserId,
@@ -34,15 +34,15 @@ namespace Tasky.Services.Servs
             return await _taskRepo.DeleteTaskAsync(id);
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllTasksAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, string? sortOrder = "asc", int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<TaskItem>> GetAllTasksAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, string? sortOrder = "asc", int pageNumber = 1, int pageSize = 10, bool comp = false)
         {
-            return await _taskRepo.GetAllTasksAsync(userId, categoryId, priority, overdue, searchTerm, sortOrder, pageNumber, pageSize);
+            return await _taskRepo.GetAllTasksAsync(userId, categoryId, priority, overdue, searchTerm, sortOrder, pageNumber, pageSize,comp);
         }
 
-        public async Task<TaskVM?> GetTaskByIdAsync(int id)
+        public async Task<EditTaskVm?> GetTaskByIdAsync(int id)
         {
             TaskItem taskitem= await _taskRepo.GetTaskByIdAsync(id);
-            TaskVM taskvm = new TaskVM();
+            EditTaskVm taskvm = new EditTaskVm();
             if (taskitem == null)
             {   
                 return null;
@@ -59,12 +59,12 @@ namespace Tasky.Services.Servs
             return taskvm;
         }
 
-        public async Task<int> GetTotalTaskCountAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null)
+        public async Task<int> GetTotalTaskCountAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, bool comp = false)
         {
-            return await _taskRepo.GetTotalTaskCountAsync(userId, categoryId, priority, overdue, searchTerm);
+            return await _taskRepo.GetTotalTaskCountAsync(userId, categoryId, priority, overdue, searchTerm,comp);
         }
 
-        public async Task<bool> UpdateTaskAsync(TaskVM TaskVM)
+        public async Task<bool> UpdateTaskAsync(EditTaskVm TaskVM)
         {
             TaskItem Task=new TaskItem()
             {

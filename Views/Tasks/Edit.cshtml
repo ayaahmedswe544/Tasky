@@ -1,4 +1,4 @@
-﻿@model Tasky.VMS.TaskVMs.TaskVM
+﻿@model Tasky.VMS.TaskVMs.EditTaskVm
 @using Tasky.Models
 @{
     Layout = "_NewLayout";
@@ -25,7 +25,11 @@
                             <textarea asp-for="Description" class="form-control rounded-4 px-3 py-2" rows="3" placeholder="Describe your task..."></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
-
+                        <div class="mb-3">
+                            <label asp-for="CreatedAt" class="form-label fw-semibold">Create date</label>
+                            <input asp-for="CreatedAt" type="date" readonly class="form-control rounded-pill px-3 py-2" />
+                            <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                        </div>
                         <div class="mb-3">
                             <label asp-for="DueDate" class="form-label fw-semibold">Due Date</label>
                             <input asp-for="DueDate" type="date" class="form-control rounded-pill px-3 py-2" />

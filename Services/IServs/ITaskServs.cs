@@ -7,11 +7,11 @@ namespace Tasky.Repositories.IRepos
     {
         Task<bool> CreateTaskAsync(TaskVM task);
 
-        Task<bool> UpdateTaskAsync(TaskVM task);
+        Task<bool> UpdateTaskAsync(EditTaskVm task);
 
         Task<bool> DeleteTaskAsync(int id);
 
-        Task<TaskVM?> GetTaskByIdAsync(int id);
+        Task<EditTaskVm?> GetTaskByIdAsync(int id);
         Task<IEnumerable<TaskItem>> GetAllTasksAsync(
             string userId,
             int? categoryId = null,
@@ -20,12 +20,14 @@ namespace Tasky.Repositories.IRepos
             string? searchTerm = null,
             string? sortOrder = "asc",
             int pageNumber = 1,
-            int pageSize = 10);
+            int pageSize = 10,
+            bool comp=false);
         Task<int> GetTotalTaskCountAsync(
             string userId,
             int? categoryId = null,
             PriorityLevel? priority = null,
             bool overdue = false,
-            string? searchTerm = null);
+            string? searchTerm = null,
+            bool comp=false);
     }
 }

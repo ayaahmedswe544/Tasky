@@ -11,6 +11,9 @@ namespace Tasky.VMS.TaskVMs
         public string? SortOrder { get; set; }
         public string? SearchTerm { get; set; }
         public int? CategoryId { get; set; }
+        public bool Comp { get; set; }
+        public bool Overdue { get; set; }
+
         public PriorityLevel? Priority { get; set; }
     }
 

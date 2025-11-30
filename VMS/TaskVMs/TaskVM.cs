@@ -8,6 +8,7 @@ namespace Tasky.VMS.TaskVMs
     {
         public int Id { get; set; }
         [Required]
+        
         public string Title { get; set; }
 
         [Required]
@@ -16,11 +17,10 @@ namespace Tasky.VMS.TaskVMs
         public bool IsCompleted { get; set; }
         [DataType(DataType.Date)]
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Today;
         [DataType(DataType.Date)]
-        [Required]
-        [Remote(action: "ValidateDueDate", controller: "Tasks", AdditionalFields = nameof(CreatedAt), ErrorMessage = "Due date must be later than Created At date.")]
-        public DateTime DueDate { get; set; }
+        [Remote(action: "ValidateDueDateCreate", controller: "Tasks", ErrorMessage = "Due date can't be in the past.")]
+        public DateTime DueDate { get; set; } 
         [Required]
         public PriorityLevel Priority { get; set; }
         

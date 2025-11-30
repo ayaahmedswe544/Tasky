@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tasky.VMS.Category
 {
@@ -6,9 +7,11 @@ namespace Tasky.VMS.Category
     {
         [Required]
         public int Id { get; set; }
-    //remote validation
+
         public string Name { get; set; }
         [MaxLength(200)]
         public string? Description { get; set; }
+
+        public int TaskCount { get; set; }
     }
 }

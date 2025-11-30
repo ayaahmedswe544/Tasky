@@ -1,0 +1,92 @@
+﻿@model Tasky.VMS.Category.CreateVM
+@{
+    Layout = "_NewLayout";
+}
+
+<div class="page-background">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card glass-card p-5 shadow-lg border-0">
+                    <h2 class="text-center fw-bold mb-4">Add New Category</h2>
+
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                        <div asp-validation-summary="All" style="color:red;"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Category Name</label>
+                            <input asp-for="Name" class="form-control rounded-pill px-3 py-2" placeholder="Enter category name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <textarea asp-for="Description" class="form-control rounded-4 px-3 py-2" rows="3" placeholder="Describe this category..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary-glow px-5 py-2 rounded-pill fw-semibold">Save Category</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<style>
+    .page-background {
+        background: linear-gradient(135deg, #e9f3ff 0%, #f7fbff 100%);
+        min-height: 100vh;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .glass-card {
+        backdrop-filter: blur(14px);
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 18px;
+        transition: all 0.3s ease;
+    }
+
+        .glass-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+    .form-control, .form-select {
+        border: 1px solid #d6e4f0;
+        transition: border-color 0.2s ease;
+        width: 100%;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.15rem rgba(0,123,255,0.25);
+        }
+
+    .btn-primary-glow {
+        background: linear-gradient(135deg, #007bff, #4dc0ff);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary-glow:hover {
+            box-shadow: 0 6px 20px rgba(0,123,255,0.5);
+            transform: translateY(-2px);
+        }
+
+    textarea {
+        resize: none;
+    }
+</style>

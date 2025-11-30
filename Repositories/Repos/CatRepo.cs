@@ -12,6 +12,30 @@ namespace Tasky.Repositories.Repos
         {
             _context = context;
         }
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync(string userId,
+            string? searchTerm = null,
+            string? sortOrder = "asc",
+            int pageNumber = 1,
+            int pageSize = 10)
+        {
+            var query = _context.Categories.Where(c => c.AppUserId == userId).ToList();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c => c.Name.Contains(searchTerm) || c.Description.Contains(searchTerm)).ToList();
+            }
+            if (sortOrder == "desc")
+            {
+                query = query.OrderByDescending(c => c.Name).ToList();
+            }
+            else
+            {
+                query = query.OrderBy(c => c.Name).ToList();
+            }
+            query = query
+           .Skip((pageNumber - 1) * pageSize)
+           .Take(pageSize).ToList();
+            return query;
+        }
         public async Task<bool> CreateCategoryAsync(Category Cat)
         {
 
@@ -33,11 +57,7 @@ namespace Tasky.Repositories.Repos
 
         }
 
-        public async Task<List<Category>> GetAllCategoriesAsync()
-        {
-             var categories = await _context.Categories.ToListAsync();
-            return categories;
-        }
+       
 
         public async Task<Category?> GetCategoryByIdAsync(int CatId)
         {
@@ -62,10 +82,36 @@ namespace Tasky.Repositories.Repos
             }
              return false;
         }
-        public Task<bool> IsNameInUseAsync(string CatName)
+        public async Task<bool> IsNameInUseAsync(string CatName)
         {
-            var cat = _context.Categories.AnyAsync(c => c.Name == CatName);
+            var cat =await _context.Categories.AnyAsync(c => c.Name == CatName);
             return cat;
+        }
+
+        public async Task<int> GetCategoryCountAsync(int id)
+        {
+            var categories= _context.Categories.Where(c => c.Id == id).ToList();
+            if(categories == null)
+            {
+                return 0;
+            }
+            int count= categories.Count;
+            return count;   
+        }
+
+        public async Task<int> GetCategoriesCountAsync(string userId, string? searchTerm)
+        {
+            var query = _context.Categories.Where(c => c.AppUserId == userId);
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var lowerSearch = searchTerm.ToLower();
+                query = query.Where(t =>
+                    t.Name.ToLower().Contains(lowerSearch) ||
+                    t.Description.ToLower().Contains(lowerSearch));
+            }
+
+            return await query.CountAsync();
+
         }
     }
 }

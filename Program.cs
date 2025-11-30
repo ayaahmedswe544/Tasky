@@ -32,6 +32,7 @@ namespace Tasky
             builder.Services.AddScoped<ITaskServs,TaskServs>();
             builder.Services.AddScoped<ICatRepo, CatRepo>();
             builder.Services.AddScoped<ICatServs, CatServs>();
+
            
 
             var app = builder.Build();

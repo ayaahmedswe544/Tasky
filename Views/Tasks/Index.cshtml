@@ -58,6 +58,15 @@
                     }
                 </select>
             </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <label class="me-2 fw-semibold mb-0">Overdue:</label>
+                <input asp-for="Overdue" type="checkbox" />
+            </div>
+
+            <div class="col-md-2 d-flex align-items-center">
+                <label class="me-2 fw-semibold mb-0">Completed:</label>
+                <input asp-for="Comp" type="checkbox" />
+            </div>
 
             <div class="col-md-2 d-flex align-items-center">
                 <label class="me-2 fw-semibold mb-0">Sort:</label>
@@ -184,6 +193,8 @@
                         <a class="page-link"
                            asp-action="Index"
                            asp-route-pageNumber="@i"
+                           asp-route-overdue=@Model.Overdue
+                           asp-route-comp=@Model.Comp
                            asp-route-CategoryId="@Model.CategoryId"
                            asp-route-Priority="@Model.Priority"
                            asp-route-SearchTerm="@Model.SearchTerm"
