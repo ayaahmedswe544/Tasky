@@ -13,5 +13,6 @@ namespace Tasky.VMS.Category
         public string? Description { get; set; }
 
         public int TaskCount { get; set; }
+        public string AppUserId { get; set; }
     }
 }

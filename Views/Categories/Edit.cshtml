@@ -1,4 +1,4 @@
-﻿@model Tasky.VMS.Category.CreateVM
+﻿@model Tasky.VMS.Category.EditCatVM
 @{
     Layout = "_NewLayout";
 }
@@ -8,15 +8,15 @@
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
                 <div class="card glass-card p-5 shadow-lg border-0">
-                    <h2 class="text-center fw-bold mb-4" style="color:#1d496f;">Add New Category</h2>
+                    <h2 class="text-center fw-bold mb-4" style="color:#1d496f;">Edit Category</h2>
 
-                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                    <form asp-action="Edit" method="post" class="needs-validation" novalidate>
                         <div asp-validation-summary="All" style="color:#1d496f;"></div>
-
+                        <input type="hidden" asp-for=Id />
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-semibold">Category Name</label>
                             <input asp-for="Name" class="form-control rounded-pill px-3 py-2" placeholder="Enter category name" />
-                            <span asp-validation-for="Name"  style="color:#1d496f;"></span>
+                            <span asp-validation-for="Name" style="color:#1d496f;"></span>
                         </div>
 
                         <div class="mb-3">
@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn px-3 py-2 rounded-pill fw-semibold" style="background-color:#1d496f;color:white;margin-right:20px;">Save Category</button>
+                            <button type="submit" class="btn px-3 py-2 rounded-pill fw-semibold" style="background-color:#1d496f;color:white;margin-right:20px;">Update</button>
                             <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Cancel</a>
                         </div>
                     </form>

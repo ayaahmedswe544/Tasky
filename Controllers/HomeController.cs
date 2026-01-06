@@ -1,21 +1,40 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Tasky.Models;
+using Tasky.Repositories.IRepos;
 using Tasky.Services.IServs;
 using Tasky.Services.Servs;
+using Tasky.VMS;
+using Tasky.VMS.TaskVMs;
 
 namespace Tasky.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         IAccountServs _accountServs;
-        public HomeController(IAccountServs accountServs)
+        ITaskServs _taskServs;
+        public HomeController(IAccountServs accountServs,ITaskServs taskServs)
         {
             _accountServs = accountServs;
+            _taskServs = taskServs;
         }
+        private readonly List<string> Quotes = new()
+    {"It does not matter how slowly you go as long as you do not stop.",
+            "Success usually comes to those who are too busy to be looking for it",
+           
+        "Believe you can and you're halfway there.",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+        "Don't watch the clock; do what it does. Keep going.",
+        "Your limitation—it's only your imagination.",
+        "Push yourself, because no one else is going to do it for you.",
+        "Great things never come from comfort zones."
+    };
 
-        [Authorize]
+      
         public async Task<IActionResult> Dashboard()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -27,37 +46,89 @@ namespace Tasky.Controllers
             {
                 ViewBag.FullName = UserProfile.FullName;
             }
+            HomeVM homevm = new HomeVM();
 
-            ViewBag.UserName = User.Identity.Name;
-            //ViewBag.TotalTasks = await _taskServs.GetTotalTaskCountAsync(userId);
-            //ViewBag.CompletedTasks = await _taskServs.GetCompletedTaskCountAsync(userId);
-            //ViewBag.OverdueTasks = await _taskServs.GetOverdueTaskCountAsync(userId);
-            //ViewBag.TodayTasks = await _taskServs.GetTodayTaskCountAsync(userId);
-            //ViewBag.RecentTasks = await _taskServs.GetRecentTasksAsync(userId, 5);
+            homevm.UserName = User.Identity.Name;
+            var random = new Random();
+            var quote = Quotes[random.Next(Quotes.Count)];
+            ViewBag.Quote = quote;
+            var userid=User.FindFirstValue(ClaimTypes.NameIdentifier);
+            homevm.CompletedTasks = await _taskServs.GetTotalTaskCountAsync(
+                userId,
+                 false,
+                null,
+                null,
+                false,
+                null,
+                true
+            );
 
+
+            homevm.TotalTasks = await _taskServs.GetTotalTaskCountAsync(
+                userId,
+                 false,
+                null,
+                null,
+                false,
+                null,
+                false
+            );
+            homevm.todayTasks= await _taskServs.GetTotalTaskCountAsync(
+                userid,
+                true,
+                null,
+                null,
+                false,
+                null,
+                false
+            );
+            homevm.PendingTasks=await _taskServs.GetTotalTaskCountAsync(
+                userid,
+                 false,
+                null,
+                null,
+                true,
+                null,
+                false
+            );
+            homevm.OverdueTasks = await _taskServs.GetTotalTaskCountAsync(
+                userid,
+                 false,
+                null,
+                null,
+                true,
+                null,
+                false
+            );
+            homevm.RecentTask = await _taskServs.GetAllTasksAsync(
+                userid,
+                 false,
+                null,
+                null,
+                false,
+                null,
+                "desc",
+                1,
+                3,
+                false
+            );
+            homevm.HighPriority = await _taskServs.GetTotalTaskCountAsync(
+                userid,
+                 false,
+                null,
+                PriorityLevel.High,
+                false,
+                null,
+                false
+            );
+            ViewBag.Photo = UserProfile.ExistingProfilePhotoPath;
             ViewBag.TotalTasks = 200 ;
             ViewBag.CompletedTasks =  40;
             ViewBag.OverdueTasks = 10;
             ViewBag.TodayTasks = 40;
-            ViewBag.RecentTasks = new List<TaskItem>{
-                new TaskItem
-                {
-                    Id = 2,
-                    Title = "Grocery shopping",
-                    Description = "Buy milk, eggs, and vegetables from the supermarket.",
-                    DueDate = DateTime.Now.AddDays(1),
-                    Priority = PriorityLevel.Medium,
-                    IsCompleted = false,
-                    CategoryId = 2,
-                    Category = new Category { Id = 2, Name = "Personal" },
-                    AppUserId = userId,
-                    AppUser = new AppUser { Id = userId, UserName = "DemoUser" },
-                    CreatedAt = DateTime.Now.AddDays(-2)
-                }
-            };
             ViewBag.HighPriority =100;
 
-            return View("index");
+            return View("index",homevm);
         }
 
     }

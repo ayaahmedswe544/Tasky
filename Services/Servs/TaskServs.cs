@@ -34,9 +34,9 @@ namespace Tasky.Services.Servs
             return await _taskRepo.DeleteTaskAsync(id);
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllTasksAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, string? sortOrder = "asc", int pageNumber = 1, int pageSize = 10, bool comp = false)
+        public async Task<IEnumerable<TaskItem>> GetAllTasksAsync(string userId, bool today=false,int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, string? sortOrder = "asc", int pageNumber = 1, int pageSize = 10, bool comp = false)
         {
-            return await _taskRepo.GetAllTasksAsync(userId, categoryId, priority, overdue, searchTerm, sortOrder, pageNumber, pageSize,comp);
+            return await _taskRepo.GetAllTasksAsync(userId,today ,categoryId, priority, overdue, searchTerm, sortOrder, pageNumber, pageSize,comp);
         }
 
         public async Task<EditTaskVm?> GetTaskByIdAsync(int id)
@@ -59,9 +59,9 @@ namespace Tasky.Services.Servs
             return taskvm;
         }
 
-        public async Task<int> GetTotalTaskCountAsync(string userId, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, bool comp = false)
+        public async Task<int> GetTotalTaskCountAsync(string userId, bool today = false, int? categoryId = null, PriorityLevel? priority = null, bool overdue = false, string? searchTerm = null, bool comp = false)
         {
-            return await _taskRepo.GetTotalTaskCountAsync(userId, categoryId, priority, overdue, searchTerm,comp);
+            return await _taskRepo.GetTotalTaskCountAsync(userId, today,categoryId, priority, overdue, searchTerm,comp);
         }
 
         public async Task<bool> UpdateTaskAsync(EditTaskVm TaskVM)
@@ -79,6 +79,10 @@ namespace Tasky.Services.Servs
                 CategoryId = TaskVM.CategoryId
             };
             return await _taskRepo.UpdateTaskAsync(Task);
+        }
+       public Task<int> ToggleTaskAsync(int id, bool completed)
+        {
+            return _taskRepo.ToggleTaskAsync(id, completed);
         }
     }
 }

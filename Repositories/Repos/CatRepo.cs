@@ -77,6 +77,7 @@ namespace Tasky.Repositories.Repos
             {
               existingCat.Name = Cat.Name;
                 existingCat.Description = Cat.Description;
+                existingCat.AppUserId = Cat.AppUserId;
                 var res = await _context.SaveChangesAsync();
                 return res > 0;
             }

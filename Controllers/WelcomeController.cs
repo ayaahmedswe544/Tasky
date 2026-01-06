@@ -6,6 +6,11 @@ namespace Tasky.Controllers
     {
         public IActionResult Index()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Dashboard", "Home");
+            }
+            
             return View();
         }
     }

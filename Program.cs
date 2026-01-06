@@ -32,7 +32,7 @@ namespace Tasky
             builder.Services.AddScoped<ITaskServs,TaskServs>();
             builder.Services.AddScoped<ICatRepo, CatRepo>();
             builder.Services.AddScoped<ICatServs, CatServs>();
-
+         
            
 
             var app = builder.Build();
@@ -54,7 +54,7 @@ namespace Tasky
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Welcome}/{action=Index}/{id?}");
+                pattern: "{controller=Welcome}/{action=index}");
 
             app.Run();
         }

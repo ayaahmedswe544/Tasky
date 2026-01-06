@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Tasky.VMS
+namespace Tasky.VMS.Account
 {
     public class RegisterVM
     {

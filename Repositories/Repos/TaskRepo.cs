@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Tasky.Models;
 using Tasky.Repositories.IRepos;
 
@@ -43,6 +44,7 @@ namespace Tasky.Repositories.Repos
 
         public async Task<IEnumerable<TaskItem>> GetAllTasksAsync(
             string userId,
+            bool today=false,
             int? categoryId = null,
             PriorityLevel? priority = null,
             bool overdue = false,
@@ -72,7 +74,11 @@ namespace Tasky.Repositories.Repos
             if (overdue)
                 query = query.Where(t => t.DueDate < DateTime.Now && !t.IsCompleted);
 
-
+            if(today)
+            {
+                var todayDate = DateTime.Today;
+                query = query.Where(t => t.DueDate.Date == todayDate);
+            }
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -95,6 +101,7 @@ namespace Tasky.Repositories.Repos
 
         public async Task<int> GetTotalTaskCountAsync(
             string userId,
+            bool today = false,
             int? categoryId = null,
             PriorityLevel? priority = null,
             bool overdue = false,
@@ -102,6 +109,11 @@ namespace Tasky.Repositories.Repos
             bool comp = false)
         {
             var query = _context.TaskItems.Where(t => t.AppUserId == userId);
+            if (today)
+            {
+                var todayDate = DateTime.Today;
+                query = query.Where(t => t.DueDate.Date == todayDate);
+            }
 
             if (categoryId.HasValue)
                 query = query.Where(t => t.CategoryId == categoryId.Value);
@@ -116,6 +128,7 @@ namespace Tasky.Repositories.Repos
 
                 query = query.Where(t => t.IsCompleted == true);
             }
+            
 
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -127,6 +140,20 @@ namespace Tasky.Repositories.Repos
             }
 
             return await query.CountAsync();
+        }
+
+       public async Task<int> ToggleTaskAsync(int id, bool completed)
+        {
+            var task = await _context.TaskItems.FindAsync(id);
+            if (task==null)
+            {
+                return 0;
+            }
+            task.IsCompleted = completed;
+            _context.TaskItems.Update(task);
+            await _context.SaveChangesAsync();
+            return 1;
+
         }
     }
 }

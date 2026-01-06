@@ -1,5 +1,6 @@
 ﻿using Tasky.Models;
 using Tasky.VMS;
+using Tasky.VMS.Account;
 
 namespace Tasky.Repositories.IRepos
 {
@@ -11,11 +12,12 @@ namespace Tasky.Repositories.IRepos
 
         public Task<AppUser?> GetProfileAsync();
        
-        public Task<bool> UpdateUserAsync(UpdateVM UserVM);
+        public Task<bool> UpdateUserAsync(AppUser user);
 
         public Task<bool> ChangePasswordAsync(ChangePsVM psVM);
 
         public Task<bool> IsEmailInUseAsync(string email);
+       
 
 
 

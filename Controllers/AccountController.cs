@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Tasky.Models;
 using Tasky.Services.IServs;
-using Tasky.VMS;
+using Tasky.VMS.Account;
 
 namespace Tasky.Controllers
 {
@@ -30,8 +30,7 @@ namespace Tasky.Controllers
             var result = await _accountServs.LoginAsync(UserVM);
             if (result)
             {
-                var emo=User.FindFirstValue(ClaimTypes.Email);
-                return Content($"user is logged in with Email{emo}");
+                return RedirectToAction("dashboard","home" );
             }
             else
             {
@@ -83,9 +82,80 @@ namespace Tasky.Controllers
                 return Json($"Email {email} is already in use.");
             }
         }
-        public IActionResult Logout()
+
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
         {
-            _accountServs.LogoutAsync();
+            var updateVM = await _accountServs.GetProfileAsync() ?? new UpdateVM();
+            var model = new ProfileVM
+            {
+                UpdateVM = updateVM,
+                ChangePsVM = new ChangePsVM()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(UpdateVM updateVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new ProfileVM
+                {
+                    UpdateVM = updateVM,
+                    ChangePsVM = new ChangePsVM()
+                };
+                return View("Profile", model);
+            }
+
+            var result = await _accountServs.UpdateUserAsync(updateVM);
+
+            var profileModel = new ProfileVM
+            {
+                UpdateVM = await _accountServs.GetProfileAsync() ?? new UpdateVM(),
+                ChangePsVM = new ChangePsVM()
+            };
+
+            if (!result)
+            {
+                ModelState.AddModelError("", "Update failed");
+                return View("Profile", profileModel);
+            }
+
+            return RedirectToAction("Profile");
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ProfileVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var vm = new ProfileVM
+                {
+                    UpdateVM = await _accountServs.GetProfileAsync() ?? new UpdateVM(),
+                    ChangePsVM = model.ChangePsVM
+                };
+                return View("Profile", vm);
+            }
+
+            var result = await _accountServs.ChangePasswordAsync(model.ChangePsVM);
+
+            if (!result)
+            {
+                ModelState.AddModelError("", "Password change failed.");
+                var vm = new ProfileVM
+                {
+                    UpdateVM = await _accountServs.GetProfileAsync() ?? new UpdateVM(),
+                    ChangePsVM = model.ChangePsVM
+                };
+                return View("Profile", vm);
+            }
+
+            return RedirectToAction("Profile");
+        }
+        public async Task<IActionResult> Logout()
+        {
+             await _accountServs.LogoutAsync();
             return RedirectToAction("Login");
         }
 

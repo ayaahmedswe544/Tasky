@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Tasky.Models;
 using Tasky.Repositories.IRepos;
 using Tasky.Services.IServs;
@@ -13,15 +14,17 @@ namespace Tasky.Controllers
     {
         private readonly ITaskServs _taskServs;
         private readonly ICatServs _categoryServ;
-        public TasksController(ITaskServs taskServs, ICatServs catServs)
+        private readonly IAccountServs _accountServs;
+        public TasksController(ITaskServs taskServs, ICatServs catServs, IAccountServs accountServs)
         {
             _taskServs = taskServs;
             _categoryServ = catServs;
-
+            _accountServs = accountServs;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(
+            bool today = false,
     int? categoryId = null,
     PriorityLevel? priority = null,
     bool overdue = false,
@@ -35,6 +38,7 @@ namespace Tasky.Controllers
             var name = User.FindFirstValue(ClaimTypes.Name);
             var tasks = await _taskServs.GetAllTasksAsync(
                 userId,
+                today,
                 categoryId,
                 priority,
                 overdue,
@@ -47,6 +51,7 @@ namespace Tasky.Controllers
 
             var totalCount = await _taskServs.GetTotalTaskCountAsync(
                 userId,
+                today=false,
                 categoryId,
                 priority,
                 overdue,
@@ -73,7 +78,12 @@ namespace Tasky.Controllers
             ViewBag.Overdue = overdue;
             ViewBag.SearchTerm = searchTerm;
             ViewBag.SortOrder = sortOrder;
-            ViewBag.Name = name;
+            
+           
+            var UserProfile = await _accountServs.GetProfileAsync();
+
+             ViewBag.FullName = UserProfile.FullName;
+          
 
             return View("Index", vm); 
 
@@ -141,11 +151,26 @@ namespace Tasky.Controllers
         public async Task<IActionResult> Edit(int id)
 
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var categories = await _categoryServ.GetAllCategoriesAsync(userId, null, "asc", 1, 10);
-            ViewBag.Categories = categories;
+            
             EditTaskVm taskVM = await _taskServs.GetTaskByIdAsync(id);
-            return View(taskVM);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(taskVM != null)
+            {
+                if (taskVM.AppUserId != userId)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else {             
+                    var categories = await _categoryServ.GetAllCategoriesAsync(userId, null, "asc", 1, 10);
+                     ViewBag.Categories = categories;
+                return View(taskVM);
+                }
+              
+            }
+                
+                return RedirectToAction(nameof(Index));
+            
 
         }
         [HttpPost]
@@ -175,5 +200,20 @@ namespace Tasky.Controllers
             ModelState.AddModelError("", "Failed to delete task.");
             return RedirectToAction("index", "tasks");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleCompleted(int id, bool completed)
+        {
+            var res = await _taskServs.ToggleTaskAsync(id, completed);
+            if (res == 0) {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
+
+        }
+
     }
 }

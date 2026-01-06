@@ -49,7 +49,9 @@ namespace Tasky.Services.Servs
                 {
                     Id = Cat.Id,
                     Name = Cat.Name,
-                    Description = Cat.Description
+                    Description = Cat.Description,
+                    AppUserId=Cat.AppUserId
+                    
                 };
                 return catVM;
             }
@@ -62,7 +64,9 @@ namespace Tasky.Services.Servs
             {
                 Id = Cat.Id,
                 Name = Cat.Name,
-                Description = Cat.Description
+                Description = Cat.Description,
+                AppUserId = Cat.AppUserId
+               
             };
             var res = await _catRepo.UpdateCategoryAsync(category);
             return res;
@@ -79,7 +83,7 @@ namespace Tasky.Services.Servs
             List<CatVM> catVMs = new List<CatVM>();
             foreach (var cat in Cats)
             {
-                var count= await _taskRepo.GetTotalTaskCountAsync(userId, cat.Id, null, false, null);
+                var count= await _taskRepo.GetTotalTaskCountAsync(userId,false,cat.Id, null, false, null);
                 CatVM catVM = new CatVM
                 {
                     Id = cat.Id,
@@ -98,10 +102,6 @@ namespace Tasky.Services.Servs
             return res;
         }
 
-        Task<int> ICatServs.GetCategoryCountAsync(string userId, string? searchTerm)
-        {
-            throw new NotImplementedException();
-        }
 
         async Task<int> ICatServs.GetCategoriesCountAsync(string userId, string? searchTerm)
         {
@@ -110,9 +110,6 @@ namespace Tasky.Services.Servs
             return count;
         }
 
-        //Task<int> ICatServs.GetCategoryCountAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+
     }
 }

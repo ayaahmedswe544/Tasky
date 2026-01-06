@@ -1,0 +1,65 @@
+﻿@model Tasky.VMS.Account.ProfileVM
+@{
+    Layout = "_NewLayout";
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold  mb-4" style="color: #1d496f;">Account Settings</h2>
+
+    <div class="row g-4" >
+        <div class="col-md-4 text-center">
+            <div class="mb-4">
+                <img src="@((string)(Model.UpdateVM.ExistingProfilePhotoPath ?? "/imgs/default-profile.png"))"
+                     class="rounded-circle shadow-sm"
+                     style="width:150px; height:150px; object-fit:cover;">
+            </div>
+            <form asp-action="EditProfile" asp-controller="Account" method="post" enctype="multipart/form-data" id="updateForm">
+                <div class="mb-3 text-start">
+                    <label asp-for="UpdateVM.FullName" class="form-label fw-semibold">Name</label>
+                    <input asp-for="UpdateVM.FullName" class="form-control rounded-pill px-3 py-2" />
+                    <span asp-validation-for="UpdateVM.FullName" class="text-danger"></span>
+                </div>
+                <div class="mb-3 text-start">
+                    <label asp-for="UpdateVM.ProfilePhoto" class="form-label fw-semibold">Profile Photo</label>
+                    <input asp-for="UpdateVM.ProfilePhoto" type="file" class="form-control" accept="image/*" />
+                    <span asp-validation-for="UpdateVM.ProfilePhoto" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary-glow rounded-pill px-4 py-2 mt-2" style="background-color: #1d496f;">
+                    <i class="bi bi-save me-2" style="color:white"></i><span style="color:white;"> Update Profile</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="col-md-8" asp-validation-summary="All">
+            <div class="card shadow-sm rounded-4 p-4">
+                <h4 class=" fw-semibold mb-4" style="color: #1d496f;">Change Password</h4>
+                <form asp-action="ChangePassword" asp-controller="Account" method="post" id="passwordForm">
+                    <div class="mb-3 text-start">
+                        <label asp-for="ChangePsVM.CurrentPassword" class="form-label fw-semibold">Current Password</label>
+                        <input asp-for="ChangePsVM.CurrentPassword" type="password" class="form-control rounded-pill px-3 py-2" />
+                        <span asp-validation-for="ChangePsVM.CurrentPassword" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 text-start"> 
+                        <label asp-for="ChangePsVM.NewPassword" class="form-label fw-semibold">New Password</label>
+                        <input asp-for="ChangePsVM.NewPassword" type="password" class="form-control rounded-pill px-3 py-2" />
+                        <span asp-validation-for="ChangePsVM.NewPassword" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label asp-for="ChangePsVM.ConfirmNewPassword" class="form-label fw-semibold">Confirm New Password</label>
+                        <input asp-for="ChangePsVM.ConfirmNewPassword" type="password" class="form-control rounded-pill px-3 py-2" />
+                        <span asp-validation-for="ChangePsVM.ConfirmNewPassword" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary-glow rounded-pill px-4 py-2 mt-2" style="background-color: #1d496f;">
+                        <i class="bi bi-key me-2" style="color:white"></i><span style="color:white"> Change Password</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

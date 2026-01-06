@@ -1,3 +1,1 @@
-﻿1-continue the index page in Tasks  
-2-continue the index page in the categories 
-3-add "create page" to the categories and also a page to view the categories and manipulate them
+﻿i finished the project on 2024-06-15.

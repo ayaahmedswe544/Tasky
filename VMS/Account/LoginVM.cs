@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tasky.VMS
+namespace Tasky.VMS.Account
 {
     public class LoginVM
     {

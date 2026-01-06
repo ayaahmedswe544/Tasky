@@ -16,13 +16,10 @@ namespace Tasky.Services.IServs
            int pageNumber = 1,
            int pageSize = 10);
         public Task<bool> IsNameInUseAsync(string CatName);
-        public Task<int> GetCategoryCountAsync(string userId,
-           string? searchTerm = null
-           );
         public Task<int> GetCategoriesCountAsync(string userId,
     string? searchTerm = null
     );
 
-        //public Task<int> GetCategoryCountAsync(int id);
+        
     }
 }
